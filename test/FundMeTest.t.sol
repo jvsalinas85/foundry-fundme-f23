@@ -102,4 +102,30 @@ contract FundMeTest is Test {
                 fundMe.getOwner().balance
         );
     }
+
+    function testWithMultipleFundersCheaper() external funded {
+        //Arrange
+        //If you want to use numbers to generate addresses use uint160
+        uint160 numberOfFunders = 10;
+        uint160 startingFunderIndex = 1; //start with 1
+        for (uint160 i = startingFunderIndex; i < numberOfFunders; i++) {
+            hoax(address(i), SEND_VALUE); //hoax creates address with funds and pranks it
+            fundMe.fund{value: SEND_VALUE}();
+        }
+
+        uint256 startingOwnerBalance = fundMe.getOwner().balance;
+        uint256 startingFundMeBalance = address(fundMe).balance;
+
+        //Act
+        vm.startPrank(fundMe.getOwner());
+        fundMe.cheaperWitdhraw();
+        vm.stopPrank();
+
+        //Assert
+        assert(address(fundMe).balance == 0);
+        assert(
+            startingFundMeBalance + startingOwnerBalance ==
+                fundMe.getOwner().balance
+        );
+    }
 }
