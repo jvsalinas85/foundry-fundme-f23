@@ -17,4 +17,4 @@ docs/
 lib/
 
 #gas snapshot
-.gas-snapshot/
+.gas-snapshot
